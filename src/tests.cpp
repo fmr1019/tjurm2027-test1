@@ -1,25 +1,40 @@
 #include "tests.h"
-
+#include<cstring>
+#include<iostream>
+using namespace std;
 // 练习1，实现库函数strlen
 int my_strlen(char *str) {
     /**
      * 统计字符串的长度，太简单了。
      */
-
+    int len=0;
+    while (str[len] != '\0') {
+        len++;
+    }
     // IMPLEMENT YOUR CODE HERE
-    return 0;
+    return len;
 }
 
 
 // 练习2，实现库函数strcat
 void my_strcat(char *str_1, char *str_2) {
+    
     /**
      * 将字符串str_2拼接到str_1之后，我们保证str_1指向的内存空间足够用于添加str_2。
      * 注意结束符'\0'的处理。
      */
 
     // IMPLEMENT YOUR CODE HERE
+    char *p1 = str_1;   
+    while (*p1 != '\0') { 
+    p1++; 
+    } 
+    while (*str_2 != '\0') {
+    *p1++ = *str_2++;
+    } 
+    *p1 = '\0';
 }
+
 
 
 // 练习3，实现库函数strstr
@@ -31,6 +46,20 @@ char* my_strstr(char *s, char *p) {
      */
 
     // IMPLEMENT YOUR CODE HERE
+    if (*p=='\0'){
+        return s;
+    }
+    for(char*start=s;*start!='\0';start++){
+        char*a=start;
+        char*b=p;
+        while(*b!='\0'&&*a==*b){
+            a++;
+            b++;
+        }
+        if(*b=='\0'){
+            return start;
+        }
+    }
     return 0;
 }
 
@@ -97,6 +126,15 @@ void rgb2gray(float *in, float *out, int h, int w) {
 
     // IMPLEMENT YOUR CODE HERE
     // ...
+    for (int y=0;y<h;y++){
+        for(int x=0;x<w;x++){
+            int base=(y*w+x)*3;
+            float R=in[base+0];
+            float G=in[base+1];
+            float B=in[base+2];
+            out[y*w+x]=0.1140 * B  + 0.5870 * G + 0.2989 * R;
+        }
+    }
 }
 
 // 练习5，实现图像处理算法 resize：缩小或放大图像
@@ -198,7 +236,23 @@ void resize(float *in, float *out, int h, int w, int c, float scale) {
 
     int new_h = h * scale, new_w = w * scale;
     // IMPLEMENT YOUR CODE HERE
-
+    for (int y=0;y<new_h;y++){
+        for (int x=0;x<new_w;x++){
+            float x0=x/scale;
+            float y0=y/scale;
+            int x1=static_cast<int>(x0);
+            int y1=static_cast<int>(y0);
+            float dx=x0-x1,dy=y0-y1;
+            int x2=(x1+1)<w?(x1+1):w-1,y2=(y1+1)<h?(y1+1):h-1;
+            for (int k=0;k<c;k++){
+                float P1=in[(y1*w+x1)*c+k];
+                float P2=in[(y1*w+x2)*c+k];
+                float P3=in[(y2*w+x1)*c+k];
+                float P4=in[(y2*w+x2)*c+k];
+                out[(y*new_w+x)*c+k]=(P1*(1-dx)*(1-dy)+P2*dx*(1-dy)+P3*(1-dx)*dy+P4*dx*dy);
+            }
+        }
+    }
 }
 
 
