@@ -258,6 +258,33 @@ void resize(float *in, float *out, int h, int w, int c, float scale) {
 
 // 练习6，实现图像处理算法：直方图均衡化
 void hist_eq(float *in, int h, int w) {
+    int n = h * w;
+    int hist[256] = {0};
+    for (int i = 0; i < n; i++) {
+        int v = (int)in[i];
+        if (v < 0) v = 0;
+        if (v > 255) v = 255;
+        hist[v]++;
+    }
+    int cdf_min = 0;
+    for (int v = 0; v < 256; v++) {
+        if (hist[v] > 0) {
+            cdf_min = hist[v];
+            break;
+        }
+    }
+    int map[256];
+    int cdf = 0;
+    for (int v = 0; v < 256; v++) {
+        cdf += hist[v];
+        map[v] = (int)((cdf - cdf_min) * 255.0 / (n - cdf_min) + 0.5);
+    }
+    for (int i = 0; i < n; i++) {
+        int v = (int)in[i];
+        if (v < 0) v = 0;
+        if (v > 255) v = 255;
+        in[i] = (float)map[v];
+    }
     /**
      * 将输入图片进行直方图均衡化处理。参数含义：
      * (1) float *in: 输入的灰度图片。
