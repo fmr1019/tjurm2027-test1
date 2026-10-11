@@ -30,7 +30,9 @@ void my_strcat(char *str_1, char *str_2) {
     p1++; 
     } 
     while(*str_2!='\0') {
-    *p1++=*str_2++;
+    *p1=*str_2;
+    *p1++;
+    *str_2++;
     } 
     *p1='\0';
 }
